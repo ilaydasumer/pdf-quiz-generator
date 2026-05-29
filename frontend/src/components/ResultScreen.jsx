@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ResultScreen({ questions, userAnswers, onRestart }) {
+export default function ResultScreen({ questions, userAnswers, onRestart, onNewUpload }) {
   // Calculate score
   let correctCount = 0;
   questions.forEach((q, index) => {
@@ -12,20 +12,19 @@ export default function ResultScreen({ questions, userAnswers, onRestart }) {
   const totalQuestions = questions.length;
   const scorePercent = Math.round((correctCount / totalQuestions) * 100);
 
-  // Motivational feedback based on score
+  // Pass/fail message
   let feedbackMessage = '';
   let feedbackClass = '';
+  const passed = scorePercent >= 50;
+
   if (scorePercent === 100) {
-    feedbackMessage = 'Perfect Score! You nailed it! 🌟';
+    feedbackMessage = 'PASS - Perfect Score! 🌟';
     feedbackClass = 'feedback-perfect';
-  } else if (scorePercent >= 80) {
-    feedbackMessage = 'Great job! You have a solid understanding. 👍';
+  } else if (passed) {
+    feedbackMessage = 'PASS - Great job! 👍';
     feedbackClass = 'feedback-great';
-  } else if (scorePercent >= 50) {
-    feedbackMessage = 'Not bad! Review the answers below to improve. 📖';
-    feedbackClass = 'feedback-medium';
   } else {
-    feedbackMessage = 'Keep practicing! Give it another try to boost your score. 💪';
+    feedbackMessage = 'FAIL - Keep practicing! 💪';
     feedbackClass = 'feedback-poor';
   }
 
@@ -37,10 +36,15 @@ export default function ResultScreen({ questions, userAnswers, onRestart }) {
           <div className="score-number">{correctCount} / {totalQuestions}</div>
           <div className="score-percentage">{scorePercent}%</div>
         </div>
-        <p className="results-feedback">{feedbackMessage}</p>
-        <button className="restart-btn" onClick={onRestart}>
-          🔄 Try Another Quiz
-        </button>
+        <p className={`results-feedback ${feedbackClass}`}>{feedbackMessage}</p>
+        <div className="result-actions">
+          <button className="restart-btn" onClick={onRestart}>
+            🔄 Try Again
+          </button>
+          <button className="new-upload-btn" onClick={onNewUpload}>
+            📄 Upload Another PDF
+          </button>
+        </div>
       </div>
 
       <div className="review-section">

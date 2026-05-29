@@ -89,6 +89,7 @@ export default function UploadBox({ file, setFile }) {
             <div className="upload-icon">📄</div>
             <p className="primary-text">Drag & drop your PDF here, or <span className="browse-link">browse</span></p>
             <p className="secondary-text">Supports PDF documents up to 10MB</p>
+            <p className="ocr-helper">Note: Scanned or image-only PDFs may not work without OCR processing.</p>
             {error && <p className="error-message">{error}</p>}
           </div>
         ) : (

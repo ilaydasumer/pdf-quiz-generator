@@ -6,7 +6,8 @@ export default function QuizSettings({
   offlineMode, 
   setOfflineMode, 
   onGenerate, 
-  disabled 
+  disabled,
+  isGenerating
 }) {
   const counts = [5, 10, 15];
 
@@ -21,7 +22,7 @@ export default function QuizSettings({
               type="button"
               className={`count-btn ${questionCount === count ? 'active' : ''}`}
               onClick={() => setQuestionCount(count)}
-              disabled={disabled}
+              disabled={disabled || isGenerating}
             >
               {count} Questions
             </button>
@@ -35,23 +36,23 @@ export default function QuizSettings({
             type="checkbox"
             checked={offlineMode}
             onChange={(e) => setOfflineMode(e.target.checked)}
-            disabled={disabled}
+            disabled={isGenerating}
           />
           <span className="checkbox-text">Use Local Mock Questions (Offline Mode)</span>
         </label>
         <p className="toggle-help-text">
           {offlineMode 
             ? "Generates quiz immediately using client-side mock questions." 
-            : "Sends the PDF to the ASP.NET Core API at http://localhost:5070."}
+            : "Sends the PDF to the ASP.NET Core API at http://localhost:5292."}
         </p>
       </div>
 
       <button
         className="generate-btn"
         onClick={onGenerate}
-        disabled={disabled}
+        disabled={disabled || isGenerating}
       >
-        {disabled ? 'Generating Quiz...' : '⚡ Generate Quiz'}
+        {isGenerating ? 'Generating Quiz...' : '⚡ Generate Quiz'}
       </button>
     </div>
   );

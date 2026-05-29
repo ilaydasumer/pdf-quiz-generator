@@ -18,37 +18,43 @@ export default function App() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState({});
   const [error, setError] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerate = async () => {
-    if (!file) {
-      setError('Please upload a PDF file first.');
+    if (!file && !offlineMode) {
       return;
     }
 
     setError('');
+    setIsGenerating(true);
     setStep('loading');
 
-    if (offlineMode) {
-      // Simulate network delay for offline mock generation
-      setTimeout(() => {
+    try {
+      if (offlineMode) {
+        // Simulate network delay for offline mock generation
+        await new Promise((resolve) => setTimeout(resolve, 1200));
         // Take the requested number of questions from mock pool
         const slicedMock = mockQuestions.slice(0, questionCount);
         setQuestions(slicedMock);
         setUserAnswers({});
         setCurrentQuestionIndex(0);
         setStep('quiz');
-      }, 1200);
-    } else {
-      // Call the real C# Backend API
-      const formData = new FormData();
-      formData.append('File', file);
-      formData.append('QuestionCount', questionCount.toString());
+      } else {
+        // Call the real C# Backend API
+        const formData = new FormData();
+        formData.append('File', file);
+        formData.append('QuestionCount', questionCount.toString());
 
-      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
         const response = await fetch(BACKEND_URL, {
           method: 'POST',
           body: formData,
+          signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
           const errMsg = await response.text();
@@ -60,13 +66,19 @@ export default function App() {
         setUserAnswers({});
         setCurrentQuestionIndex(0);
         setStep('quiz');
-      } catch (err) {
-        console.error(err);
-        setError(
-          `Failed to connect to backend at ${BACKEND_URL}. Ensure the ASP.NET Core API is running, or toggle "Offline Mode" above to test immediately.`
-        );
-        setStep('setup');
       }
+    } catch (err) {
+      console.error(err);
+      if (err.name === 'AbortError') {
+        setError('Request timed out after 10 seconds. Is the backend running?');
+      } else {
+        setError(
+          'Backend server is not reachable. Please start the ASP.NET Core API or enable Offline Mode.'
+        );
+      }
+      setStep('setup');
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -98,11 +110,12 @@ export default function App() {
     setStep('result');
   };
 
-  const handleRestart = () => {
+  const handleRestart = (keepFile = false) => {
     setQuestions([]);
     setUserAnswers({});
     setCurrentQuestionIndex(0);
     setError('');
+    if (!keepFile) setFile(null);
     setStep('setup');
   };
 
@@ -127,13 +140,14 @@ export default function App() {
               offlineMode={offlineMode}
               setOfflineMode={setOfflineMode}
               onGenerate={handleGenerate}
-              disabled={!file}
+              disabled={!file && !offlineMode}
+              isGenerating={isGenerating}
             />
 
             {error && (
-              <div className="card error-card" style={{ borderLeft: '4px solid var(--danger)', marginTop: '24px' }}>
-                <h4 style={{ color: 'var(--danger)', marginBottom: '8px', fontWeight: 600 }}>Connection Error</h4>
-                <p style={{ fontSize: '0.9rem', color: 'var(--text-main)' }}>{error}</p>
+              <div className="card error-card">
+                <h4 className="error-title">Connection Error</h4>
+                <p className="error-text">{error}</p>
               </div>
             )}
           </div>
@@ -165,7 +179,8 @@ export default function App() {
           <ResultScreen
             questions={questions}
             userAnswers={userAnswers}
-            onRestart={handleRestart}
+            onRestart={() => handleRestart(true)}
+            onNewUpload={() => handleRestart(false)}
           />
         )}
       </main>
