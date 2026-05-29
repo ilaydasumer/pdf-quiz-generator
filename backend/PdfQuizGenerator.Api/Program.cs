@@ -10,7 +10,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://localhost:3000")
+        policy.WithOrigins("http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:3000")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -20,7 +20,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddOpenApi();
 
 // Register application services
-builder.Services.AddScoped<IQuizService, MockQuizService>();
+builder.Services.AddSingleton<IPdfTextExtractor, PdfPigTextExtractor>();
+builder.Services.AddScoped<IQuizService, PdfQuizService>();
 
 var app = builder.Build();
 

@@ -5,7 +5,9 @@ import QuizQuestion from './components/QuizQuestion';
 import ResultScreen from './components/ResultScreen';
 import { mockQuestions } from './data/mockQuestions';
 
-const BACKEND_URL = 'http://localhost:5292/api/quiz/generate';
+const BACKEND_URL = window.location.hostname === '127.0.0.1' 
+  ? 'http://127.0.0.1:5292/api/quiz/generate' 
+  : 'http://localhost:5292/api/quiz/generate';
 
 export default function App() {
   const [step, setStep] = useState('setup'); // 'setup' | 'loading' | 'quiz' | 'result'

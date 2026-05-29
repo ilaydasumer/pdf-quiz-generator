@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using PdfQuizGenerator.Api.Models;
@@ -117,7 +118,7 @@ public class MockQuizService : IQuizService
         }
     };
 
-    public async Task<List<QuizQuestion>> GenerateQuizAsync(string fileName, int questionCount)
+    public async Task<List<QuizQuestion>> GenerateQuizAsync(Stream pdfStream, int questionCount)
     {
         // Simulate extraction and AI generation delay (e.g. 1.5 seconds)
         await Task.Delay(1500);
@@ -126,7 +127,6 @@ public class MockQuizService : IQuizService
         int count = Math.Clamp(questionCount, 5, 15);
 
         // Returns the first N questions from the pool.
-        // In a real application, you'd extract PDF text and pass it to an AI model.
         return MockQuestionsPool.Take(count).ToList();
     }
 }

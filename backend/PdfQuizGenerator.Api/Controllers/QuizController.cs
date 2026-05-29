@@ -46,8 +46,9 @@ public class QuizController : ControllerBase
 
         try
         {
-            // Call service
-            var questions = await _quizService.GenerateQuizAsync(request.File.FileName, request.QuestionCount);
+            // Call service with file stream
+            using var stream = request.File.OpenReadStream();
+            var questions = await _quizService.GenerateQuizAsync(stream, request.QuestionCount);
 
             // Map models to response DTOs
             var response = questions.Select(q => new QuizQuestionDto
@@ -63,6 +64,10 @@ public class QuizController : ControllerBase
             }).ToList();
 
             return Ok(response);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
