@@ -7,5 +7,5 @@ namespace PdfQuizGenerator.Api.Services;
 
 public interface IQuizService
 {
-    Task<List<QuizQuestion>> GenerateQuizAsync(Stream pdfStream, int questionCount);
+    Task<List<QuizQuestion>> GenerateQuizAsync(Stream pdfStream, int questionCount, string difficulty);
 }

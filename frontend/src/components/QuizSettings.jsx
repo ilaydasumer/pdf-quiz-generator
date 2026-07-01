@@ -3,6 +3,8 @@ import React from 'react';
 export default function QuizSettings({ 
   questionCount, 
   setQuestionCount, 
+  difficulty,
+  setDifficulty,
   offlineMode, 
   setOfflineMode, 
   onGenerate, 
@@ -25,6 +27,23 @@ export default function QuizSettings({
               disabled={disabled || isGenerating}
             >
               {count} Questions
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="settings-group">
+        <label className="settings-label">Difficulty Level</label>
+        <div className="btn-group">
+          {['Easy', 'Medium', 'Hard'].map((diff) => (
+            <button
+              key={diff}
+              type="button"
+              className={`count-btn ${difficulty === diff ? 'active' : ''}`}
+              onClick={() => setDifficulty(diff)}
+              disabled={disabled || isGenerating}
+            >
+              {diff}
             </button>
           ))}
         </div>

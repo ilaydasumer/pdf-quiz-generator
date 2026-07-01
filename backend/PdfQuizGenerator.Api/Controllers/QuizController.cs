@@ -48,7 +48,7 @@ public class QuizController : ControllerBase
         {
             // Call service with file stream
             using var stream = request.File.OpenReadStream();
-            var questions = await _quizService.GenerateQuizAsync(stream, request.QuestionCount);
+            var questions = await _quizService.GenerateQuizAsync(stream, request.QuestionCount, request.Difficulty);
 
             // Map models to response DTOs
             var response = questions.Select(q => new QuizQuestionDto

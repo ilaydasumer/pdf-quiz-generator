@@ -11,4 +11,7 @@ public class QuizGenerateRequest
     [Required(ErrorMessage = "Question count is required.")]
     [Range(5, 15, ErrorMessage = "Question count must be 5, 10, or 15.")]
     public int QuestionCount { get; set; }
+
+    [Required(ErrorMessage = "Difficulty level is required.")]
+    public string Difficulty { get; set; } = "Medium";
 }

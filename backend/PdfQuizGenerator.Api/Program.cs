@@ -1,4 +1,7 @@
 using PdfQuizGenerator.Api.Services;
+using DotNetEnv;
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,7 @@ builder.Services.AddOpenApi();
 
 // Register application services
 builder.Services.AddSingleton<IPdfTextExtractor, PdfPigTextExtractor>();
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IQuizService, PdfQuizService>();
 
 var app = builder.Build();

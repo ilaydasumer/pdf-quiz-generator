@@ -118,7 +118,7 @@ public class MockQuizService : IQuizService
         }
     };
 
-    public async Task<List<QuizQuestion>> GenerateQuizAsync(Stream pdfStream, int questionCount)
+    public async Task<List<QuizQuestion>> GenerateQuizAsync(Stream pdfStream, int questionCount, string difficulty)
     {
         // Simulate extraction and AI generation delay (e.g. 1.5 seconds)
         await Task.Delay(1500);

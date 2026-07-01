@@ -13,6 +13,7 @@ export default function App() {
   const [step, setStep] = useState('setup'); // 'setup' | 'loading' | 'quiz' | 'result'
   const [file, setFile] = useState(null);
   const [questionCount, setQuestionCount] = useState(5);
+  const [difficulty, setDifficulty] = useState('Medium');
   const [offlineMode, setOfflineMode] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -44,9 +45,10 @@ export default function App() {
         const formData = new FormData();
         formData.append('File', file);
         formData.append('QuestionCount', questionCount.toString());
+        formData.append('Difficulty', difficulty);
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
 
         const response = await fetch(BACKEND_URL, {
           method: 'POST',
@@ -70,11 +72,11 @@ export default function App() {
     } catch (err) {
       console.error(err);
       if (err.name === 'AbortError') {
-        setError('Request timed out after 10 seconds. Is the backend running?');
+        setError('Request timed out after 60 seconds. The AI might be taking too long or the backend is unreachable.');
+      } else if (err.message === 'Failed to fetch') {
+        setError('Backend server is not reachable. Please start the ASP.NET Core API or enable Offline Mode.');
       } else {
-        setError(
-          'Backend server is not reachable. Please start the ASP.NET Core API or enable Offline Mode.'
-        );
+        setError(`Backend Error: ${err.message}`);
       }
       setStep('setup');
     } finally {
@@ -137,6 +139,8 @@ export default function App() {
             <QuizSettings
               questionCount={questionCount}
               setQuestionCount={setQuestionCount}
+              difficulty={difficulty}
+              setDifficulty={setDifficulty}
               offlineMode={offlineMode}
               setOfflineMode={setOfflineMode}
               onGenerate={handleGenerate}
