@@ -757,3 +757,68 @@ body {
   .quiz-navigation { flex-direction: column-reverse; gap: 12px; }
   .submit-btn { width: 100%; }
 }
+
+/* User Auth Header Controls */
+.auth-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 15px;
+  background-color: var(--bg-card);
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  font-size: 0.9rem;
+}
+
+.auth-user-info span {
+  color: var(--text-muted);
+}
+
+.logout-button {
+  background-color: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.logout-button:hover {
+  background-color: var(--danger-light);
+}
+
+/* Navigation Tabs */
+.app-nav-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1px;
+}
+
+.nav-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 8px 16px 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.nav-tab:hover {
+  color: var(--text-main);
+}
+
+.nav-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+

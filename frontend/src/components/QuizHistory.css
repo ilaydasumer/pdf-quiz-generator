@@ -1,0 +1,276 @@
+.history-card {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 15px;
+}
+
+.history-header h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 24px;
+}
+
+.history-loading {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.history-error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.history-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #9ca3af;
+  font-size: 16px;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+.history-table th {
+  background-color: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.history-table td {
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #4b5563;
+}
+
+.history-table tr:hover {
+  background-color: #f9fafb;
+}
+
+.file-name {
+  font-weight: 500;
+  color: #111827;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.score-cell {
+  color: #10b981;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.badge-easy {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badge-medium {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.badge-hard {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.text-button {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  font-size: 14px;
+}
+
+.text-button:hover {
+  text-decoration: underline;
+  color: #2563eb;
+}
+
+/* Details Card */
+.details-card {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 30px;
+}
+
+.details-header {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 20px;
+  margin-bottom: 25px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: #4b5563;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.back-button:hover {
+  color: #111827;
+}
+
+.details-header h2 {
+  margin: 0 0 10px 0;
+  color: #111827;
+  font-size: 22px;
+  word-break: break-all;
+}
+
+.details-meta {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.score-badge {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  background-color: #f3f4f6;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.questions-review {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review-question-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #fff;
+  transition: box-shadow 0.2s;
+}
+
+.review-question-card.correct-card {
+  border-left: 4px solid #10b981;
+}
+
+.review-question-card.incorrect-card {
+  border-left: 4px solid #ef4444;
+}
+
+.review-question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.question-number {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-tag {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.status-correct {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-incorrect {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.review-question-text {
+  margin: 0 0 16px 0;
+  color: #111827;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.review-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.review-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #f3f4f6;
+  background-color: #f9fafb;
+  font-size: 14px;
+}
+
+.review-option.correct-option {
+  background-color: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+  font-weight: 500;
+}
+
+.review-option.user-incorrect-option {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.option-letter {
+  font-weight: 600;
+}

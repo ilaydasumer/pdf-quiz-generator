@@ -4,6 +4,9 @@ import QuizSettings from './components/QuizSettings';
 import QuizQuestion from './components/QuizQuestion';
 import ResultScreen from './components/ResultScreen';
 import { mockQuestions } from './data/mockQuestions';
+import Login from './components/Login';
+import Register from './components/Register';
+import QuizHistory from './components/QuizHistory';
 
 const BACKEND_URL = window.location.hostname === '127.0.0.1' 
   ? 'http://127.0.0.1:5292/api/quiz/generate' 
@@ -20,6 +23,11 @@ export default function App() {
   const [userAnswers, setUserAnswers] = useState({});
   const [error, setError] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  
+  const [authStep, setAuthStep] = useState('login'); // 'login' | 'register'
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+  const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail') || '');
+  const [activeTab, setActiveTab] = useState('generator'); // 'generator' | 'history'
 
   const handleGenerate = async () => {
     if (!file && !offlineMode) {
@@ -103,12 +111,55 @@ export default function App() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Validate that all questions are answered
     if (Object.keys(userAnswers).length < questions.length) {
       alert('Please answer all questions before submitting.');
       return;
     }
+    
+    // Save to Database History if authenticated
+    if (isAuthenticated) {
+      // Calculate score percentage
+      let correctCount = 0;
+      questions.forEach((q, index) => {
+        if (userAnswers[index] === q.correctAnswerIndex) {
+          correctCount++;
+        }
+      });
+      const scorePercent = Math.round((correctCount / questions.length) * 100);
+
+      try {
+        const token = localStorage.getItem('token');
+        const payload = {
+          fileName: file ? file.name : (offlineMode ? "Mock_Quiz.pdf" : "Generated_Quiz.pdf"),
+          difficulty: difficulty,
+          score: scorePercent,
+          questions: questions.map((q, idx) => ({
+            questionText: q.questionText,
+            correctAnswerIndex: q.correctAnswerIndex,
+            userAnswerIndex: userAnswers[idx],
+            options: q.options.map(o => o.text)
+          }))
+        };
+
+        const response = await fetch('http://localhost:5292/api/quiz/history', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          console.error("Failed to save history record.");
+        }
+      } catch (err) {
+        console.error("Error saving history:", err);
+      }
+    }
+
     setStep('result');
   };
 
@@ -121,6 +172,18 @@ export default function App() {
     setStep('setup');
   };
 
+  const handleLoginSuccess = (token, email) => {
+    setIsAuthenticated(true);
+    setUserEmail(email);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
+    setIsAuthenticated(false);
+    setUserEmail('');
+  };
+
   return (
     <div className="app-container">
       <header className="app-header">
@@ -129,10 +192,43 @@ export default function App() {
         <p className="app-description">
           Upload a study guide, textbook chapter, or article in PDF format, choose your options, and generate a customized quiz instantly.
         </p>
+        {isAuthenticated && (
+          <div className="auth-user-info">
+            <span>Logged in as <strong>{userEmail}</strong></span>
+            <button className="logout-button" onClick={handleLogout}>Log Out</button>
+          </div>
+        )}
       </header>
 
+      {isAuthenticated && (
+        <div className="app-nav-tabs">
+          <button 
+            className={`nav-tab ${activeTab === 'generator' ? 'active' : ''}`}
+            onClick={() => setActiveTab('generator')}
+          >
+            Generate Quiz
+          </button>
+          <button 
+            className={`nav-tab ${activeTab === 'history' ? 'active' : ''}`}
+            onClick={() => setActiveTab('history')}
+          >
+            Quiz History
+          </button>
+        </div>
+      )}
+
       <main className="app-content">
-        {step === 'setup' && (
+        {!isAuthenticated ? (
+          authStep === 'login' ? (
+            <Login onLoginSuccess={handleLoginSuccess} switchToRegister={() => setAuthStep('register')} />
+          ) : (
+            <Register switchToLogin={() => setAuthStep('login')} />
+          )
+        ) : activeTab === 'history' ? (
+          <QuizHistory />
+        ) : (
+          <>
+            {step === 'setup' && (
           <div className="setup-workflow">
             <UploadBox file={file} setFile={setFile} />
             
@@ -186,6 +282,8 @@ export default function App() {
             onRestart={() => handleRestart(true)}
             onNewUpload={() => handleRestart(false)}
           />
+        )}
+        </>
         )}
       </main>
 
