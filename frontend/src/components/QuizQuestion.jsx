@@ -9,12 +9,30 @@ export default function QuizQuestion({
   onPrev,
   onNext,
   onSubmit,
+  onExit,
   isLast
 }) {
   if (!question) return null;
 
   return (
-    <div className="quiz-card">
+    <div className="quiz-card" style={{ position: 'relative' }}>
+      <button 
+        className="exit-quiz-btn" 
+        onClick={onExit}
+        style={{
+          position: 'absolute',
+          top: '1rem',
+          right: '1rem',
+          background: 'none',
+          border: 'none',
+          color: '#ef4444',
+          cursor: 'pointer',
+          fontWeight: 'bold',
+          fontSize: '0.9rem'
+        }}
+      >
+        Exit Quiz ✕
+      </button>
       <div className="quiz-header">
         <span className="question-progress">Question {questionIndex + 1} of {totalQuestions}</span>
         <div className="progress-bar-container">

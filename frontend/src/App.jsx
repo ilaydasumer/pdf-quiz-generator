@@ -8,8 +8,8 @@ import Login from './components/Login';
 import Register from './components/Register';
 import QuizHistory from './components/QuizHistory';
 
-const BACKEND_URL = window.location.hostname === '127.0.0.1' 
-  ? 'http://127.0.0.1:5292/api/quiz/generate' 
+const BACKEND_URL = window.location.hostname === '127.0.0.1'
+  ? 'http://127.0.0.1:5292/api/quiz/generate'
   : 'http://localhost:5292/api/quiz/generate';
 
 export default function App() {
@@ -23,7 +23,7 @@ export default function App() {
   const [userAnswers, setUserAnswers] = useState({});
   const [error, setError] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  
+
   const [authStep, setAuthStep] = useState('login'); // 'login' | 'register'
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
   const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail') || '');
@@ -117,7 +117,7 @@ export default function App() {
       alert('Please answer all questions before submitting.');
       return;
     }
-    
+
     // Save to Database History if authenticated
     if (isAuthenticated) {
       // Calculate score percentage
@@ -202,13 +202,13 @@ export default function App() {
 
       {isAuthenticated && (
         <div className="app-nav-tabs">
-          <button 
+          <button
             className={`nav-tab ${activeTab === 'generator' ? 'active' : ''}`}
             onClick={() => setActiveTab('generator')}
           >
             Generate Quiz
           </button>
-          <button 
+          <button
             className={`nav-tab ${activeTab === 'history' ? 'active' : ''}`}
             onClick={() => setActiveTab('history')}
           >
@@ -229,61 +229,62 @@ export default function App() {
         ) : (
           <>
             {step === 'setup' && (
-          <div className="setup-workflow">
-            <UploadBox file={file} setFile={setFile} />
-            
-            <QuizSettings
-              questionCount={questionCount}
-              setQuestionCount={setQuestionCount}
-              difficulty={difficulty}
-              setDifficulty={setDifficulty}
-              offlineMode={offlineMode}
-              setOfflineMode={setOfflineMode}
-              onGenerate={handleGenerate}
-              disabled={!file && !offlineMode}
-              isGenerating={isGenerating}
-            />
+              <div className="setup-workflow">
+                <UploadBox file={file} setFile={setFile} />
 
-            {error && (
-              <div className="card error-card">
-                <h4 className="error-title">Connection Error</h4>
-                <p className="error-text">{error}</p>
+                <QuizSettings
+                  questionCount={questionCount}
+                  setQuestionCount={setQuestionCount}
+                  difficulty={difficulty}
+                  setDifficulty={setDifficulty}
+                  offlineMode={offlineMode}
+                  setOfflineMode={setOfflineMode}
+                  onGenerate={handleGenerate}
+                  disabled={!file && !offlineMode}
+                  isGenerating={isGenerating}
+                />
+
+                {error && (
+                  <div className="card error-card">
+                    <h4 className="error-title">Connection Error</h4>
+                    <p className="error-text">{error}</p>
+                  </div>
+                )}
               </div>
             )}
-          </div>
-        )}
 
-        {step === 'loading' && (
-          <div className="card loading-card">
-            <div className="spinner"></div>
-            <p className="loading-text">Analyzing PDF & Generating Quiz</p>
-            <p className="loading-subtext">Creating {questionCount} custom questions based on your file...</p>
-          </div>
-        )}
+            {step === 'loading' && (
+              <div className="card loading-card">
+                <div className="spinner"></div>
+                <p className="loading-text">Analyzing PDF & Generating Quiz</p>
+                <p className="loading-subtext">Creating {questionCount} custom questions based on your file...</p>
+              </div>
+            )}
 
-        {step === 'quiz' && (
-          <QuizQuestion
-            question={questions[currentQuestionIndex]}
-            questionIndex={currentQuestionIndex}
-            totalQuestions={questions.length}
-            selectedAnswer={userAnswers[currentQuestionIndex]}
-            onSelectAnswer={handleAnswerSelect}
-            onPrev={handlePrev}
-            onNext={handleNext}
-            onSubmit={handleSubmit}
-            isLast={currentQuestionIndex === questions.length - 1}
-          />
-        )}
+            {step === 'quiz' && (
+              <QuizQuestion
+                question={questions[currentQuestionIndex]}
+                questionIndex={currentQuestionIndex}
+                totalQuestions={questions.length}
+                selectedAnswer={userAnswers[currentQuestionIndex]}
+                onSelectAnswer={handleAnswerSelect}
+                onPrev={handlePrev}
+                onNext={handleNext}
+                onSubmit={handleSubmit}
+                onExit={() => handleRestart(true)}
+                isLast={currentQuestionIndex === questions.length - 1}
+              />
+            )}
 
-        {step === 'result' && (
-          <ResultScreen
-            questions={questions}
-            userAnswers={userAnswers}
-            onRestart={() => handleRestart(true)}
-            onNewUpload={() => handleRestart(false)}
-          />
-        )}
-        </>
+            {step === 'result' && (
+              <ResultScreen
+                questions={questions}
+                userAnswers={userAnswers}
+                onRestart={() => handleRestart(true)}
+                onNewUpload={() => handleRestart(false)}
+              />
+            )}
+          </>
         )}
       </main>
 

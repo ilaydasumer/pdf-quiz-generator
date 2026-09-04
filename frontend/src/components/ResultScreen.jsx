@@ -48,7 +48,7 @@ export default function ResultScreen({ questions, userAnswers, onRestart, onNewU
       </div>
 
       <div className="review-section">
-        <h3 className="review-title">Question Breakdown</h3>
+        <h3 className="review-title">Detailed Answer Review</h3>
         <div className="review-list">
           {questions.map((q, qIdx) => {
             const userAnswer = userAnswers[qIdx];
