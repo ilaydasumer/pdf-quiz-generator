@@ -1,120 +1,119 @@
-# PDF Quiz Generator
+# PDF Quiz Generator 📝
 
-A modern, full-stack application designed to generate multiple-choice quiz questions from uploaded PDF files, allowing users to select question counts, take the quiz, submit answers, and receive detailed scoring feedback.
+PDF Quiz Generator is a full-stack application that generates multiple-choice quizzes from PDF documents.
 
-This repository contains a working prototype designed as a portfolio-ready demonstration, complete with rule-based text extraction logic on the backend and an intuitive SaaS-inspired web interface.
+The user uploads a text-based PDF, the backend extracts the document content using `PdfPig`, and the extracted text is sent to the Google Gemini API to generate questions based on the document.
 
----
+The goal of the project is to provide a simple way for students, teachers, or anyone studying from long documents to quickly test their understanding.
 
-## 🛠️ Technologies Used
+## What It Does 🚀
 
-### Frontend
-- **React (v18)** - Dynamic, component-driven user interface.
-- **Vite** - High-speed frontend building and hot module replacement.
-- **Vanilla CSS** - Customized SaaS-style layout, modern typography, responsive cards, and clean hover state transitions.
+* **Quiz Generation:** Upload a text-based PDF and generate multiple-choice questions based on its content.
+* **Custom Question Count:** Choose exactly how many questions you want to solve (5, 10, or 15).
+* **User Authentication:** Users can register and log in securely using ASP.NET Core Identity and JWT authentication.
+* **Quiz History:** Generated quizzes and user scores are stored in PostgreSQL so previous results can be reviewed later.
+* **Simple UI:** The frontend is built with React and vanilla CSS without using an additional bulky UI framework.
+
+## How It Works ⚙️
+
+1. The user uploads a PDF from the React frontend.
+2. The file is sent to the ASP.NET Core backend.
+3. `PdfPig` extracts the text layer from the PDF.
+4. The extracted content is sent to the Gemini 2.5 API with a strict system prompt.
+5. Gemini generates multiple-choice questions in a specific JSON format based on the document.
+6. The backend parses the JSON and returns the quiz to the frontend.
+7. After the quiz is completed, the result is stored in PostgreSQL, linked to the authenticated user.
+
+## Under the Hood (Technical Details) 🧠
+
+To make the application robust and reliable, a few key technical decisions were implemented:
+
+* **Text-Only Payload:** The backend does not send the raw PDF file to the AI. Instead, it only sends the extracted text. To prevent exceeding Gemini's token limits, the text payload is strictly clamped to a maximum of 100,000 characters.
+* **Strict JSON Response:** The AI is prompted to return a strictly typed JSON array without markdown formatting. Each generated question adheres to the following structure:
+  ```json
+  {
+    "questionText": "What is the capital of France?",
+    "options": ["London", "Berlin", "Paris", "Madrid"],
+    "correctAnswerIndex": 2
+  }
+  ```
+* **Database Relationships:** A one-to-many relationship is established in Entity Framework Core between the `ApplicationUser` (Identity) and `QuizHistory` entities, allowing users to securely retrieve only their own past quiz scores.
+
+## Tech Stack 🛠️
 
 ### Backend
-- **ASP.NET Core Web API (.NET 9)** - Secure, structured RESTful API.
-- **C#** - Strongly-typed server-side controller and service pipeline.
-- **UglyToad.PdfPig** - Powerful PDF parsing library for text extraction.
-- **OpenAPI (Swagger)** - In-browser API documentation.
+* ASP.NET Core Web API (.NET 9)
+* Entity Framework Core & PostgreSQL
+* ASP.NET Core Identity & JWT Authentication
+* Google Gemini API
+* PdfPig
 
----
+### Frontend
+* React 18
+* Vite
+* Axios
+* Vanilla CSS
 
-## 🚀 Features
+## How to Run It Locally 💻
 
-### Current Version (v1.0 - Working Prototype)
-- **Real PDF Text Extraction**: Uses `PdfPig` to extract text blocks, sentences, and keywords, processing them with a rule-based algorithm.
-- *(Note: Scanned or image-only PDFs currently require OCR and are not fully supported yet.)*
-- **SaaS-Style UI**: A clean, distraction-free centered card layout with responsive CSS adjustments for mobile devices.
-- **PDF Upload Zone**: Interactive drag-and-drop or file browser module validating PDF formats.
-- **Count Selector**: Options to choose between 5, 10, or 15 questions.
-- **Interactive Quiz Player**: Options card select states, previous/next question navigation, and completion progress bars.
-- **Comprehensive Score review**: Percentage results, custom feedback messages, and a list highlighting correctly and incorrectly answered questions.
-- **Dual-Mode System**:
-  - **API Mode**: Queries the ASP.NET Core server dynamically over CORS to extract text and generate questions.
-  - **Offline Mode**: A client-side mock questions fallback allowing instant testing of the frontend without running the server.
-- **CORS Configured**: Configured to connect seamlessly across local dev ports.
+### Requirements
+Make sure you have the following installed:
+* .NET 9 SDK
+* Node.js
+* PostgreSQL
 
-### Planned Features (Future Roadmap)
-- [ ] **AI-Powered Quiz Generation**: Integrate Gemini or OpenAI APIs to analyze extracted text and generate high-quality conceptual questions dynamically, moving beyond rule-based extraction.
-- [ ] **OCR Support**: Add optical character recognition to support scanned documents.
-- [ ] **User Authentication**: Implement JWT/Identity authentication for users.
-- [ ] **Quiz History**: Save user quizzes and results to a database (SQL Server/PostgreSQL).
-- [ ] **Leaderboard**: Track high scores across users on public quiz guides.
+### 1. Backend Setup
 
----
-
-## 💻 Running the Project
-
-### 1. Starting the C# Backend Web API
-
-Navigate to the API folder and run the command:
-
+Navigate to the API project:
 ```bash
 cd backend/PdfQuizGenerator.Api
-dotnet run
 ```
 
-The server will start and run locally on:
-- HTTP: `http://localhost:5292`
-- HTTPS: `https://localhost:7217`
+Create a `.env` file inside the API folder and add the required configuration:
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+ConnectionStrings__DefaultConnection=Host=localhost;Port=5432;Database=PdfQuizGeneratorDb;Username=postgres;Password=yourpassword
+JwtSettings__Secret=YourSuperSecretJWTKeyThatIsVeryLong
+```
 
-You can verify the API is up by visiting the Swagger OpenAPI dashboard at:
-`http://localhost:5292/openapi/v1.json`
+Apply the Entity Framework migrations:
+```bash
+dotnet ef database update
+```
 
----
+Start the backend:
+```bash
+dotnet run
+```
+The API runs by default at `http://localhost:5292`. 
+The OpenAPI specification is available at `http://localhost:5292/openapi/v1.json`.
 
-### 2. Starting the React Frontend
+### 2. Frontend Setup
 
-Navigate to the frontend folder, install the dependencies, and start the Vite dev server:
-
+Open a new terminal and navigate to the frontend folder:
 ```bash
 cd frontend
+```
+
+Install the dependencies and start the development server:
+```bash
 npm install
 npm run dev
 ```
+The frontend runs by default at `http://localhost:5173`.
 
-The web client will open on:
-`http://localhost:5173`
+## Current Limitations ⚠️
 
-*(Note: If the backend is running, the frontend will connect automatically. If you run the frontend alone, select **"Use Local Mock Questions (Offline Mode)"** in the settings checklist to test).*
+The application currently supports text-based PDF files only.
 
----
+Scanned PDFs or PDFs that mainly contain images are not supported yet because OCR (Optical Character Recognition) functionality has not been implemented. `PdfPig` relies on embedded fonts to extract text.
 
-## 🔗 Example API Endpoint
+## Future Plans 🗺️
+* [ ] Add OCR support for scanned or image-based PDFs
+* [ ] Add a public leaderboard
+* [ ] Export generated quizzes as PDF
+* [ ] Export quiz results as CSV
+* [ ] Add more quiz customization options (difficulty levels, question types)
 
-### Generate Quiz
-- **Path**: `POST /api/quiz/generate`
-- **Content-Type**: `multipart/form-data`
-- **Request Parameters**:
-  - `File`: PDF File Attachment (`application/pdf`)
-  - `QuestionCount`: Integer (`5`, `10`, or `15`)
-
-#### Sample Response DTO (`200 OK`)
-```json
-[
-  {
-    "id": 1,
-    "questionText": "What does HTML stand for?",
-    "options": [
-      { "index": 0, "text": "HyperText Markup Language" },
-      { "index": 1, "text": "HighText Markup Language" },
-      { "index": 2, "text": "HyperText Markdown Language" },
-      { "index": 3, "text": "HyperText Multiple Language" }
-    ],
-    "correctAnswerIndex": 0
-  },
-  {
-    "id": 2,
-    "questionText": "Which language is primarily used for styling web pages?",
-    "options": [
-      { "index": 0, "text": "JavaScript" },
-      { "index": 1, "text": "HTML" },
-      { "index": 2, "text": "CSS" },
-      { "index": 3, "text": "Python" }
-    ],
-    "correctAnswerIndex": 2
-  }
-]
-```
+## Contributing 🤝
+Bug reports, suggestions, and contributions are welcome. Feel free to open an issue or submit a pull request!
